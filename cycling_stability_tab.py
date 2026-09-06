@@ -18,6 +18,7 @@ import io
 import re
 
 import streamlit as st
+from matplotlib.ticker import AutoMinorLocator
 
 from config import FIGURE_WIDTH, FIGURE_HEIGHT
 from excel_reader import load_statistics_and_process
