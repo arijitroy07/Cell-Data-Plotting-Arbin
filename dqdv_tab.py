@@ -495,9 +495,16 @@ def build_dqdv_figure(
         labelsize=tick_fs,
         width=AXIS_LINE_WIDTH,
         length=5,
-        direction="out",
+        direction="in",
     )
-
+    
+  ax.tick_params(
+        axis="both",
+        which="minor",
+        width=AXIS_LINE_WIDTH * 0.8,
+        length=3,
+        direction="in",
+    )
     ax.grid(False)
 
     fig.tight_layout()
