@@ -411,9 +411,9 @@ def render(ui):
 
             ax_top, ax_bottom = fig.axes[:2]
 
-# Exactly 1 minor tick between major ticks on BOTH Y axes
-                ax_top.yaxis.set_minor_locator(AutoMinorLocator(2))
-                ax_bottom.yaxis.set_minor_locator(AutoMinorLocator(2))
+            # Exactly 1 minor tick between major ticks on BOTH Y axes
+            ax_top.yaxis.set_minor_locator(AutoMinorLocator(2))
+            ax_bottom.yaxis.set_minor_locator(AutoMinorLocator(2))
 
 
             buf = io.BytesIO()
