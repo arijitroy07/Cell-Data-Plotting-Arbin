@@ -463,6 +463,8 @@ def build_dqdv_figure(
 
         if custom_y_max is not None:
             ax.set_ylim(top=custom_y_max)
+
+
     # -------------------------------------------------------------------------
     # Minor ticks: exactly 1 minor tick between each pair of major ticks
     # -------------------------------------------------------------------------
@@ -473,10 +475,6 @@ def build_dqdv_figure(
         cell_info["y_label"],
         fontsize=axis_label_fs,
     )
-        cell_info["y_label"],
-        fontsize=axis_label_fs,
-    )
-
 
     ax.set_ylabel(
         y_unit_label,
