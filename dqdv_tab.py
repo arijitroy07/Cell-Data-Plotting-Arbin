@@ -21,6 +21,7 @@ import io
 import numpy as np
 import streamlit as st
 import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator
 from scipy.signal import find_peaks
 
 from config import (
@@ -463,10 +464,17 @@ def build_dqdv_figure(
         if custom_y_max is not None:
             ax.set_ylim(top=custom_y_max)
 
+# -------------------------------------------------------------------------
+# Minor ticks: exactly 1 minor tick between each pair of major ticks
+# -------------------------------------------------------------------------
+ax.xaxis.set_minor_locator(AutoMinorLocator(2))
+ax.yaxis.set_minor_locator(AutoMinorLocator(2))
+    
     ax.set_xlabel(
         cell_info["y_label"],
         fontsize=axis_label_fs,
     )
+
 
     ax.set_ylabel(
         y_unit_label,
