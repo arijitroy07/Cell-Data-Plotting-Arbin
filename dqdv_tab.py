@@ -470,7 +470,7 @@ def build_dqdv_figure(
 ax.xaxis.set_minor_locator(AutoMinorLocator(2))
 ax.yaxis.set_minor_locator(AutoMinorLocator(2))
     
-    ax.set_xlabel(
+ax.set_xlabel(
         cell_info["y_label"],
         fontsize=axis_label_fs,
     )
@@ -505,14 +505,15 @@ ax.yaxis.set_minor_locator(AutoMinorLocator(2))
         length=5,
         direction="in",
     )
-    
-  ax.tick_params(
+
+    ax.tick_params(
         axis="both",
         which="minor",
         width=AXIS_LINE_WIDTH * 0.8,
         length=3,
         direction="in",
     )
+
     ax.grid(False)
 
     fig.tight_layout()
