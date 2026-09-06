@@ -23,11 +23,15 @@ from excel_reader import COULOMBIC_EFFICIENCY_COLUMN
 def _style_axes(ax, all_plotted_capacities, cell_info, title_text,
                 use_default_axes, custom_x_min, custom_x_max, custom_y_min, custom_y_max,
                 title_fs, axis_label_fs, tick_fs, legend_fs):
+
     if len(all_plotted_capacities) == 0:
-        raise ValueError("No valid capacity data were found for the requested cycle(s).")
+        raise ValueError(
+            "No valid capacity data were found for the requested cycle(s)."
+        )
 
     maximum_capacity = np.nanmax(all_plotted_capacities)
     automatic_x_max = maximum_capacity * 1.05
+
     if automatic_x_max <= 0:
         automatic_x_max = 1.0
 
@@ -36,9 +40,16 @@ def _style_axes(ax, all_plotted_capacities, cell_info, title_text,
     else:
         if custom_x_min is not None:
             ax.set_xlim(left=custom_x_min)
-        ax.set_xlim(right=custom_x_max if custom_x_max is not None else automatic_x_max)
 
-    ax.xaxis.set_major_locator(MaxNLocator(nbins=6))
+        ax.set_xlim(
+            right=custom_x_max
+            if custom_x_max is not None
+            else automatic_x_max
+        )
+
+    ax.xaxis.set_major_locator(
+        MaxNLocator(nbins=6)
+    )
 
     if use_default_axes:
         ax.set_ylim(cell_info["y_limits"])
@@ -46,34 +57,55 @@ def _style_axes(ax, all_plotted_capacities, cell_info, title_text,
     else:
         ax.set_ylim(custom_y_min, custom_y_max)
 
-    # Exactly 1 minor tick between each pair of major ticks
-ax.xaxis.set_minor_locator(AutoMinorLocator(2))
-ax.yaxis.set_minor_locator(AutoMinorLocator(2))
+    # Exactly 1 minor tick between every pair of major ticks
+    ax.xaxis.set_minor_locator(
+        AutoMinorLocator(2)
+    )
+    ax.yaxis.set_minor_locator(
+        AutoMinorLocator(2)
+    )
 
-    ax.set_xlabel("Specific Capacity (mAh/g)", fontsize=axis_label_fs)
-    ax.set_ylabel(cell_info["y_label"], fontsize=axis_label_fs)
-    ax.set_title(title_text, fontsize=title_fs, pad=8)
-    ax.legend(loc="best", fontsize=legend_fs, frameon=False)
+    ax.set_xlabel(
+        "Specific Capacity (mAh/g)",
+        fontsize=axis_label_fs,
+    )
+
+    ax.set_ylabel(
+        cell_info["y_label"],
+        fontsize=axis_label_fs,
+    )
+
+    ax.set_title(
+        title_text,
+        fontsize=title_fs,
+        pad=8,
+    )
+
+    ax.legend(
+        loc="best",
+        fontsize=legend_fs,
+        frameon=False,
+    )
 
     for spine in ax.spines.values():
         spine.set_linewidth(AXIS_LINE_WIDTH)
 
     ax.tick_params(
-    axis="both",
-    which="major",
-    labelsize=tick_fs,
-    width=AXIS_LINE_WIDTH,
-    length=5,
-    direction="in",
-)
+        axis="both",
+        which="major",
+        labelsize=tick_fs,
+        width=AXIS_LINE_WIDTH,
+        length=5,
+        direction="in",
+    )
 
-ax.tick_params(
-    axis="both",
-    which="minor",
-    width=AXIS_LINE_WIDTH * 0.8,
-    length=3,
-    direction="in",
-)
+    ax.tick_params(
+        axis="both",
+        which="minor",
+        width=AXIS_LINE_WIDTH * 0.8,
+        length=3,
+        direction="in",
+    )
 
     ax.grid(False)
 
