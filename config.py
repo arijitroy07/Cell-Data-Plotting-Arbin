@@ -69,7 +69,7 @@ CELL_TYPES = {
     },
     "Lithium-sulfur battery": {
         "y_label": r"Voltage (|V| vs. $Li^{+}/Li^{0}$)",
-        "y_limits": (1.65, 2.85),
+        "y_limits": (1.65, 2.75),
         "y_ticks": np.arange(1.7, 2.71, 0.2),
     },
 }
