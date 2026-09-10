@@ -205,7 +205,7 @@ def render(ui):
         figure_width = st.number_input(
             "Cycling / rate plot width",
             min_value=2.0,
-            value=float(FIGURE_WIDTH),
+            value=float(FIGURE_WIDTH + 7.0),
             step=0.5,
             key="cycling_plot_width",
         )
