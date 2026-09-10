@@ -64,10 +64,10 @@ def calculate_dqdv_at_original_voltage(q_values, v_values):
     if len(q_values) < 2:
         return v_values, np.full(len(v_values), np.nan)
 
-    dQ = np.gradient(q_values)
-    dV = np.gradient(v_values)
-
-    dQdV = np.full(q_values.shape, np.nan, dtype=float)
+    dQ = np.diff(q_values)      # N-1
+    dV = np.diff(v_values)      # N-1
+    
+    dQdV = np.full(q_values.shape, np.nan)   # N
 
     valid_derivative = (
         np.isfinite(dQ)
