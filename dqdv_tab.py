@@ -52,7 +52,11 @@ from capacity_utils import (
 
 def calculate_dqdv_at_original_voltage(q_values, v_values):
     """
-    Calculate dQ/dV at the SAME original voltage points used by the GCD plot.
+    Calculate dQ/dV from consecutive Q-V points.
+
+    Q is the already calculated specific capacity (mAh/g).
+    Each interval derivative is plotted at the second original voltage point,
+    so no midpoint interpolation or smoothing is used.
     """
     q_values = np.asarray(q_values, dtype=float)
     v_values = np.asarray(v_values, dtype=float)
@@ -62,12 +66,14 @@ def calculate_dqdv_at_original_voltage(q_values, v_values):
     v_values = v_values[valid_values]
 
     if len(q_values) < 2:
-        return v_values, np.full(len(v_values), np.nan)
+        return np.array([], dtype=float), np.array([], dtype=float)
 
-    dQ = np.diff(q_values)      # N-1
-    dV = np.diff(v_values)      # N-1
-    
-    dQdV = np.full(q_values.shape, np.nan)   # N
+    # Consecutive-point differentiation
+    dQ = np.diff(q_values)
+    dV = np.diff(v_values)
+
+    # dQ and dV both have N-1 points
+    dQdV = np.full(dQ.shape, np.nan, dtype=float)
 
     valid_derivative = (
         np.isfinite(dQ)
@@ -82,8 +88,11 @@ def calculate_dqdv_at_original_voltage(q_values, v_values):
         where=valid_derivative,
     )
 
-    return v_values, dQdV
+    # Each derivative belongs to the interval between i-1 and i.
+    # Plot it at the second ORIGINAL voltage point.
+    voltage_for_plot = v_values[1:]
 
+    return voltage_for_plot, dQdV
 
 # =============================================================================
 # PEAK DETECTION / REDUCTION
@@ -396,25 +405,15 @@ def build_dqdv_figure(
     for curve in curves:
         color = curve["color"]
         label = curve["label"]
-        legend_added = False
 
         combined_v = []
         combined_y = []
 
+        # Keep the existing internally calculated charge/discharge segments,
+        # but combine their resulting dQ/dV points into one plotted line.
         for v_values, y_values in curve["segments"]:
             if len(v_values) == 0:
                 continue
-
-            line_label = label if not legend_added else None
-            legend_added = True
-
-            ax.plot(
-                v_values,
-                y_values,
-                color=color,
-                linewidth=LINE_WIDTH,
-                label=line_label,
-            )
 
             combined_v.append(v_values)
             combined_y.append(y_values)
@@ -423,9 +422,27 @@ def build_dqdv_figure(
             v_all = np.concatenate(combined_v)
             y_all = np.concatenate(combined_y)
 
+            # Remove only mathematically undefined derivative points,
+            # such as an exact dV = 0 interval.
+            valid_line = np.isfinite(v_all) & np.isfinite(y_all)
+
+            v_plot = v_all[valid_line]
+            y_plot = y_all[valid_line]
+
+            # ONE continuous line for this cycle/file
+            ax.plot(
+                v_plot,
+                y_plot,
+                color=color,
+                linewidth=LINE_WIDTH,
+                label=label,
+            )
+
+            # Peak detection uses exactly the same final dQ/dV data
+            # that are displayed in the figure.
             peaks = find_representative_peaks(
-                v_all,
-                y_all,
+                v_plot,
+                y_plot,
                 peak_threshold_percent,
                 peak_merge_tolerance_v,
             )
