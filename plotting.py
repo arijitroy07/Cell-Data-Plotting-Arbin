@@ -66,7 +66,7 @@ def _style_axes(ax, all_plotted_capacities, cell_info, title_text,
     )
 
     ax.set_xlabel(
-        "Specific Capacity (mAh/g)",
+        "Specific Capacity (mAh g$^{-1}$)",
         fontsize=axis_label_fs,
     )
 
