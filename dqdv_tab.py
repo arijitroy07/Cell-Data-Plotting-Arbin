@@ -52,7 +52,8 @@ from capacity_utils import (
 
 def calculate_dqdv_at_original_voltage(q_values, v_values):
     """
-    Calculate dQ/dV at the SAME original voltage points used by the GCD plot.
+    Calculate dQ/dV using consecutive Q-V points
+    and assign each derivative to the second voltage point.
     """
     q_values = np.asarray(q_values, dtype=float)
     v_values = np.asarray(v_values, dtype=float)
@@ -64,10 +65,12 @@ def calculate_dqdv_at_original_voltage(q_values, v_values):
     if len(q_values) < 2:
         return v_values, np.full(len(v_values), np.nan)
 
-    dQ = np.diff(q_values)      # N-1
-    dV = np.diff(v_values)      # N-1
-    
-    dQdV = np.full(q_values.shape, np.nan)   # N
+    # Consecutive-point differences
+    dQ = np.diff(q_values)
+    dV = np.diff(v_values)
+
+    # Derivative for each interval
+    interval_dqdv = np.full(len(dQ), np.nan, dtype=float)
 
     valid_derivative = (
         np.isfinite(dQ)
@@ -78,12 +81,16 @@ def calculate_dqdv_at_original_voltage(q_values, v_values):
     np.divide(
         dQ,
         dV,
-        out=dQdV,
+        out=interval_dqdv,
         where=valid_derivative,
     )
 
-    return v_values, dQdV
+    # Keep same length as original voltage array.
+    # First point has no preceding interval, so it remains NaN.
+    dqdv_values = np.full(len(q_values), np.nan, dtype=float)
+    dqdv_values[1:] = interval_dqdv
 
+    return v_values, dqdv_values
 
 # =============================================================================
 # PEAK DETECTION / REDUCTION
