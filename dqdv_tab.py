@@ -54,9 +54,11 @@ def calculate_dqdv_at_original_voltage(q_values, v_values):
     """
     Calculate dQ/dV from consecutive Q-V points.
 
-    Q is the already calculated specific capacity (mAh/g).
-    Each interval derivative is plotted at the second original voltage point,
-    so no midpoint interpolation or smoothing is used.
+    Q is specific capacity in mAh/g.
+    V is voltage in V.
+
+    The derivative for each interval is assigned to the
+    second original voltage point of that interval.
     """
     q_values = np.asarray(q_values, dtype=float)
     v_values = np.asarray(v_values, dtype=float)
@@ -68,11 +70,11 @@ def calculate_dqdv_at_original_voltage(q_values, v_values):
     if len(q_values) < 2:
         return np.array([], dtype=float), np.array([], dtype=float)
 
-    # Consecutive-point differentiation
+    # Consecutive differences: both arrays have length N-1
     dQ = np.diff(q_values)
     dV = np.diff(v_values)
 
-    # dQ and dV both have N-1 points
+    # Output must ALSO have length N-1
     dQdV = np.full(dQ.shape, np.nan, dtype=float)
 
     valid_derivative = (
@@ -88,8 +90,7 @@ def calculate_dqdv_at_original_voltage(q_values, v_values):
         where=valid_derivative,
     )
 
-    # Each derivative belongs to the interval between i-1 and i.
-    # Plot it at the second ORIGINAL voltage point.
+    # dQ/dV has N-1 values, so use N-1 corresponding voltage points
     voltage_for_plot = v_values[1:]
 
     return voltage_for_plot, dQdV
